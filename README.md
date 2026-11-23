@@ -17,3 +17,5 @@ The original game files and extracted audio samples are intentionally not includ
 ## Source and license
 
 The modified native engine is based on [DMMac](https://github.com/peterkmet/dmmac). Its original source notices and GPL-3.0 license are retained under `engine/`. This repository does not license or distribute the original game data.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the source map, regression commands, and next open issue.

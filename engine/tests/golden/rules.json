@@ -1,0 +1,448 @@
+{
+ "action list": [
+  {
+   "count": 1,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "SWING",
+    "",
+    ""
+   ],
+   "screen": "8429c8674b971b065c747591816d6c72e8e75cb8c4e8844f1e1b301c1646faa2",
+   "state": "ca4099cf16ca938e65e1e10c64cfec5018d3755d5ec4612e44f0c4ee06ab7792"
+  },
+  {
+   "count": 2,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "THROW",
+    "STAB",
+    ""
+   ],
+   "screen": "8bea13a5cc81e6b41e0a2e2f5d1aff5a873b023e7599a1306b556d00515324e9",
+   "state": "44707343c3792d9c70d7ff67929c5daf2d82b608e153eca64f9e88f6cd5577ad"
+  },
+  {
+   "count": 1,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "SWING",
+    "",
+    ""
+   ],
+   "screen": "e1d63b5bf97e3a4c067690e8da4203e3562d5ee89b13f263f3405e143d16857c",
+   "state": "198717c57abb66aa1ac660b747a4708e14f0f25f8efc5c4db35728ebd333effd"
+  },
+  {
+   "count": 1,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "SWING",
+    "",
+    ""
+   ],
+   "screen": "43a8650b60c8c22fe542bc5c387bc4c430cc71fc0f6614ef48a34db44fc95785",
+   "state": "c559b206c78151fa09c8b8f0f5c0a1a65f5872f0a2339c7841440af01e143d18"
+  },
+  {
+   "count": 1,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "SLASH",
+    "",
+    ""
+   ],
+   "screen": "3a2fea4e474c0350552176f6f68441615e271122128f5d0099884a059e064976",
+   "state": "f70ad886261b233bc9eb5cef022ed820f3aecf498f8af54effce9522d9895eb4"
+  },
+  {
+   "count": 1,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "SLASH",
+    "",
+    ""
+   ],
+   "screen": "fa2508eb12e56d4ba1700895cdc0d40b6e57b6aeb305f1c28f7e4c984da3e10b",
+   "state": "c1ab1bf3d455edc51ec62a083f962c4df87284800e07b6a1592a0abe85967eb1"
+  },
+  {
+   "count": 1,
+   "levels": [
+    1,
+    0,
+    0
+   ],
+   "names": [
+    "SWING",
+    "",
+    ""
+   ],
+   "screen": "8429c8674b971b065c747591816d6c72e8e75cb8c4e8844f1e1b301c1646faa2",
+   "state": "838b4347c888b7228f0abdf50d265816f482fb7f79b6813d60899789346227ec"
+  },
+  {
+   "count": 3,
+   "levels": [
+    1,
+    0,
+    2
+   ],
+   "names": [
+    "THROW",
+    "STAB",
+    "SLASH"
+   ],
+   "screen": "364dc655d62ab9d0fbf6777e1a389922ce0d25b73ebd3029beb77fdfd674d18b",
+   "state": "ee02ee146d2c5786f6ce17220843fc7e04b7e3d1f867a9085ace84f5b1c27e54"
+  },
+  {
+   "count": 3,
+   "levels": [
+    1,
+    2,
+    3
+   ],
+   "names": [
+    "SWING",
+    "PARRY",
+    "CHOP"
+   ],
+   "screen": "643d93b46107a2167487ec6e819039016511c34ed71a09ff4bd46fa65d722ab9",
+   "state": "142a41c8a3f4a0e3edc7bff0d160de7ae347f186adeac1cc9926da9ab44d0dde"
+  },
+  {
+   "count": 3,
+   "levels": [
+    1,
+    2,
+    3
+   ],
+   "names": [
+    "SWING",
+    "PARRY",
+    "CHOP"
+   ],
+   "screen": "e6aedb75e9ef67f524d10df8dc8136b46c920f2e026431acd96bfc1b3fc805f6",
+   "state": "93c29750e65935b5fc40015ca78ad44150a3b36d866f502a1d59801560f05658"
+  },
+  {
+   "count": 2,
+   "levels": [
+    1,
+    2,
+    3
+   ],
+   "names": [
+    "SLASH",
+    "BRANDISH",
+    ""
+   ],
+   "screen": "46b6da8c70fbcb46bdaaf74b7e4740a9161f32ce3c6159b8af6e642468330b06",
+   "state": "c4f16ca3ef7b1e2c7483781766286ce55b731bd71a72676db0cf6a4c801dd7c2"
+  },
+  {
+   "count": 3,
+   "levels": [
+    1,
+    2,
+    3
+   ],
+   "names": [
+    "SLASH",
+    "BRANDISH",
+    "CONFUSE"
+   ],
+   "screen": "430fc72081080e377443a872c437e8d1d7484de1c806c6ad098fa860f059a82f",
+   "state": "9b4cdfb45837718af0620a304c860b193e23f185135ead22a860dac20566d554"
+  }
+ ],
+ "alcove": [
+  {
+   "screen": "cf49bf1a0282a5d146df70a2157a61eb7afe5d413fa13927102bc30833310d27",
+   "state": "48aa9b7ec9abedd60b217a7b32608aee7b205331f739cdd111c1685262b8420f"
+  },
+  {
+   "screen": "8086aab7ccc62fd76041207e1509a420c4202ac4ae84205f6110ba2ece1f9b7d",
+   "state": "c3affeb90fea3ebc2408dbf74d22902d3e1a1c4b3365f2196e6192fc28d3186f"
+  }
+ ],
+ "dead caster": [
+  {
+   "screen": "2ed3b8e2786dc3d1eb61304dba65677dc5fa5070a936270c10f381dabfe53b1a",
+   "state": "fd9779eb014c56f8724a6290904238a037ea45590d72f980007a69edd7f638a3"
+  }
+ ],
+ "door button": [
+  {
+   "screen": "18434019432f97808a46ef76074e1731c56d7dea9c85b53b21aec0578f32692e",
+   "state": "20a29f579b5bf1c63e41a765ca27478e6088043eeb5f953726f99b3bdee53c6d"
+  },
+  {
+   "screen": "fdc5e3a9fd230928e3ff34b0faff772dabd16e542cae82ca7770c5d64b476147",
+   "state": "e4f23dfec6b66d374299f0dae78495d621d2a014c779df3f0e578a73e580e0b4"
+  }
+ ],
+ "drink 0": [
+  {
+   "screen": "2596c9ba420830c4215ba7383f2f0d8cfffe03427850d7f8685de9aa8dae272c",
+   "state": "901387afcda5ed7451d833c8e6b0d4e558b04171c2510699e68418564377144c"
+  }
+ ],
+ "drink 1": [
+  {
+   "screen": "2596c9ba420830c4215ba7383f2f0d8cfffe03427850d7f8685de9aa8dae272c",
+   "state": "6307feee4f759acf83a0768cea4b5386f2ddb8ef7341d061b912fa2ae18d2682"
+  }
+ ],
+ "fill": [
+  {
+   "screen": "8b5f5e4814e65270133c863e4130fb76d042aa2df0ab58d4f0768602147d9115",
+   "state": "83e7ca314dd4dd279e521a39c8c6b586066c3d5f6ec9c5798295a289e7e27492"
+  },
+  {
+   "screen": "91cab0b962e6142d0a30b5bb6230c4aa4985b871efc5187fdd6b15b18a110463",
+   "state": "e478e2644350892996707299cc0abb778092b5db92700695b048e02898068007"
+  }
+ ],
+ "fuse": [
+  {
+   "screen": "0faea51de378f29da6818bdf946dc2e9304a9799809ade5ec4bec187d0264ac4",
+   "state": "0d05147bb4914e6c6a399236b2c06adc746a14603187d68a1e446fa92ce3eed2"
+  }
+ ],
+ "grab and drop": [
+  {
+   "screen": "2ea18f1acfbf3823ca88acff561daa4872207fca7ec878dd352c9eb46cb72e4f",
+   "state": "131ae13e1aa0bc97be2d58b4d9e5b6df711724efd5c326ff97bdf48e1695581e"
+  },
+  {
+   "screen": "5862fbce5ff2c3d65742ec10d55979ea1ea9b458a66c0c05dbaf0ef8c2d2c986",
+   "state": "dd5bd43d62de7921328a68e0c4f34789212e39d7d64ebb3d318d6ec4e7d5a769"
+  },
+  {
+   "screen": "570daa5c49c423a9251e4df581fcfa343d6ca886524443e06f64b6556922eae0",
+   "state": "d2ee37ea8a8d80d232da75c000c3749ee33030851312883a95aebe6358d74b8e"
+  },
+  {
+   "screen": "5862fbce5ff2c3d65742ec10d55979ea1ea9b458a66c0c05dbaf0ef8c2d2c986",
+   "state": "603437b054197cd5789760a94fca2c6f3253ac19f94a325b08d46768300fce35"
+  }
+ ],
+ "grab under a creature": [
+  {
+   "hand": 65535,
+   "screen": "8b1471e827ad3b887f944a6112a534b5d430d6d1f3373d341c52a3729b9b2996",
+   "state": "3accbdda9bc55d3633f7501785e15c77584f183685e07be5e7547c2ec224e6b1"
+  },
+  {
+   "hand": 8248,
+   "screen": "90417437f80561390386dd54405777664164bb7a71ef28e8f4af119c85f482ab",
+   "state": "3a519a770eb0154541324e7b279998a958f6a3bab635471f426045a595e9539f"
+  },
+  {
+   "hand": 57381,
+   "screen": "dac67161e86b0938da4c6c7a4e40d932621ca783c5984fb9de1b90e52f837eb9",
+   "state": "22ae17a344db96b3cddd9f4445d914312c8da67a7b585a6f4bd07cad3825ccf4"
+  }
+ ],
+ "imaginary wall": [
+  {
+   "screen": "c5246bdc8c12474b5bf44d3fb65eb02a0c2f45cf99b656be8f6016d921670097",
+   "state": "d39ae00ffec1aa06d348ed45f1d32f850ff2dacdf3d7588c780d694dd5e6cc6d"
+  },
+  {
+   "screen": "c5246bdc8c12474b5bf44d3fb65eb02a0c2f45cf99b656be8f6016d921670097",
+   "state": "fa49e6e7a7993e456e70c9e788b11a8c9ca74be7a3ec5f9fd0dc6940c3d53abf"
+  }
+ ],
+ "load": [
+  {
+   "screen": "ff23926b1d0587165270a8a1d6bb5606126cfb78ccd07713d10a1b87e9b0ed35",
+   "state": "67aa843eb82c1879fd6ea943873941e0813382c2ec26c6ecdd4307b99a63d147"
+  },
+  {
+   "screen": "aa638573cc47e76f808beaba7234da161e65896c41ee8a18945c64cd0c3529d5",
+   "state": "ac022c2d0e84cf3c41809621ee0c60cce5c2ec67c43c80f9cd8d59bdf75ba22a"
+  },
+  {
+   "screen": "7ab42b98f2646acf6b8d64d2fbb25068b0228dca8a3bf4aef1c0c86d9bb9d85d",
+   "state": "bad1ea949d7de9704f99ae7a1b29ad447290cf0bf11b1a30040630bded69eee7"
+  }
+ ],
+ "movement blocked": [
+  {
+   "position": [
+    4,
+    2,
+    1
+   ],
+   "screen": "1f34eeb7784ea733828454c624a782ca22dea48f7567bdf55d06f95ed719be95",
+   "state": "54d3657895833de442810cc20b43a857d2aaae40ca4e9c63c65028f3d5be2707"
+  },
+  {
+   "position": [
+    5,
+    2,
+    1
+   ],
+   "screen": "3ef447601cd63e0616b2ec506856caf22f49ab4d87f7f8a1d011c5366de56d16",
+   "state": "d1df850d5cde9b1342f20c69c531b7d76542d4befa942cfcb5adfd6448681e48"
+  },
+  {
+   "position": [
+    4,
+    2,
+    1
+   ],
+   "screen": "e24971ab20ebbfdf0222940207fd3e55d7ab8b36dabd5984d00eb4530ae3cfa9",
+   "state": "6ee322a29e617251acf58cfd1eb27f4c2bef3596d38d4cafe73adb8002504c99"
+  },
+  {
+   "position": [
+    5,
+    2,
+    1
+   ],
+   "screen": "3ef447601cd63e0616b2ec506856caf22f49ab4d87f7f8a1d011c5366de56d16",
+   "state": "e2643b00f0061a52861430fedf4dd25b2eca02d71878bf8e66bd7b42cf0fd329"
+  },
+  {
+   "position": [
+    5,
+    2,
+    1
+   ],
+   "screen": "3ef447601cd63e0616b2ec506856caf22f49ab4d87f7f8a1d011c5366de56d16",
+   "state": "7a13252bcdef1e8d09042d583939f609f7e3d516a1e6859c011a382657332a82"
+  },
+  {
+   "position": [
+    5,
+    2,
+    1
+   ],
+   "screen": "3ef447601cd63e0616b2ec506856caf22f49ab4d87f7f8a1d011c5366de56d16",
+   "state": "7a13252bcdef1e8d09042d583939f609f7e3d516a1e6859c011a382657332a82"
+  }
+ ],
+ "runes 100": [
+  {
+   "screen": "93d57a5077656ebf09a290aa0dd7b07b68461e789667413243c64d2469e40aca",
+   "state": "f3d7db1ad23231ef4042cf8aa404c25375c40365d98cee2d5e895ab10f6c8d85"
+  },
+  {
+   "screen": "bfeee64c5d414f3cc3c4b282b79c23451c92fe02fe09b4148b45d5bb55676f8b",
+   "state": "413376d8e07afbc56d05ebb6d0aae3f18befca999991a02f6420a87f556f0407"
+  },
+  {
+   "screen": "0f5264769bb1b64f5c63fbe5fbcfd53fb6a80283e02b272a026f00b40c5ca126",
+   "state": "9e92c6ccd941e5da492779e5584640105b4495efa14cb60c727da6fa24bd9b3d"
+  },
+  {
+   "screen": "bfeee64c5d414f3cc3c4b282b79c23451c92fe02fe09b4148b45d5bb55676f8b",
+   "state": "5f6770257f1ca26a7b723e2fa9139442a7fa8ea895a312ba06a483e1a3c7ab1c"
+  },
+  {
+   "screen": "9a99e3be38c8daf725a75aca309e9b3838f79819ae93c4b4496ebb62af07e6f3",
+   "state": "10adcbddedd7f9450d4190adcee563e9718b5ba0d41b81c24f6fb71bbaf05e48"
+  }
+ ],
+ "runes 2": [
+  {
+   "screen": "811af80f110667ac0115ba3bb0e9005f462fbb92cb8607b903a3b04c7a7d59c0",
+   "state": "86dec96958b4852ad7d2083903420561e64771eb5a0c4e7d9ff29a1b09f46696"
+  },
+  {
+   "screen": "811af80f110667ac0115ba3bb0e9005f462fbb92cb8607b903a3b04c7a7d59c0",
+   "state": "47f1a28dc58bafbc6672ff8eb0b3a9c0f830d16d6554e6fdc1318142a397f6c4"
+  },
+  {
+   "screen": "811af80f110667ac0115ba3bb0e9005f462fbb92cb8607b903a3b04c7a7d59c0",
+   "state": "1bfd1388538fae0221e8b42e5d20985e714b4effc2401f8c86d82024ea219c44"
+  },
+  {
+   "screen": "5fdaf12a0996fc10696b67d6d738a2a3f8f6d725fd0865998b3b977687f33c1c",
+   "state": "5b0587a9b6480378267abb0e16f8a9d25b1ed1fdbae7e9050ed2a3c013aacb0a"
+  },
+  {
+   "screen": "5fdaf12a0996fc10696b67d6d738a2a3f8f6d725fd0865998b3b977687f33c1c",
+   "state": "f47107ff98849d8dfca403840607f74374d8983c822e95c84f769740a73bd7d2"
+  }
+ ],
+ "ticks": [
+  {
+   "screen": "2ed3b8e2786dc3d1eb61304dba65677dc5fa5070a936270c10f381dabfe53b1a",
+   "state": "ac15457e27f0926fe62921aa6670bd0e9ed076f3f5430aecb0ac6ccc436121f3"
+  },
+  {
+   "screen": "2ed3b8e2786dc3d1eb61304dba65677dc5fa5070a936270c10f381dabfe53b1a",
+   "state": "a9a8bc75b19eb0d97ac87b7ae5e89f42dd83c62d21557829e6f869b7b1fe318a"
+  }
+ ],
+ "torch": [
+  {
+   "screen": "63db825a6b73ab656020946464d1b9533cedfdda568054ff6efb62332abdff41",
+   "state": "afbd77dd92fbc6fa57a44022ce6717e635acf1edf16ff624541f0c78a127f2e0"
+  },
+  {
+   "screen": "63db825a6b73ab656020946464d1b9533cedfdda568054ff6efb62332abdff41",
+   "state": "b074f482be6b068894afa2f281efa06fd0797da8bc163da9d0b730301b47bd28"
+  },
+  {
+   "screen": "9d730710729092550efd2d854dbd20bf887b384982648fd112600c735469de0d",
+   "state": "1db886b08cf0477a68c4a0f912b8a9940492aecd60aa6c5f3de32a6b753245ed"
+  },
+  {
+   "screen": "9d730710729092550efd2d854dbd20bf887b384982648fd112600c735469de0d",
+   "state": "3cc228c7e9dfcd690c565e1df6f502e8e8f16fb38ed3ddf71d0293dc5c952cc4"
+  }
+ ],
+ "turn to attacker": [
+  {
+   "screen": "ba75b4b0bbe3e8dc8eebc235ae21b054aac4be00ecf7f7e95edbd870660a5607",
+   "state": "fb6ea842c86d5268e7a6349358840623ebe11b39958ea3e870f0cade43d65eac"
+  },
+  {
+   "screen": "455f9db9ef6de20dd0e8d50525f3174add0bf75185ac668849147456cbe9a0ba",
+   "state": "41dfa475eb091a8417f48def6456fc7e5c3adffcdf93686fc7cd655efcd82fa9"
+  }
+ ],
+ "vi altar": [
+  {
+   "screen": "b1655978f3c292710a3ae47985de18fd4bf72e8223259a4f3f67297561667372",
+   "state": "fcc95019689159b2964c77640b4962df61e20a6346fd9bce845084423247911e"
+  },
+  {
+   "screen": "5cab1dff371c6202ac33736b8027ca2e27e1f165286488e670b4bae962c95638",
+   "state": "29587786477bbff93acd8d52c67759dda4d22bb85c0e5e6f0a4f2a7436b7d308"
+  }
+ ],
+ "visibility": [
+  "313f37805363b20cdd4fd809a23d8e15ec85eb462842f0de331ab7d2a266a824"
+ ]
+}

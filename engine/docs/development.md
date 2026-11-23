@@ -1,0 +1,132 @@
+# Development
+
+How to build, test, and release the port. For the player side, see [Player manual](manual.md). For the structure of the code, see [Architecture](architecture.md).
+
+## Build
+
+The port uses C11, `clang`, and SDL3. Install the tools first.
+
+```sh
+brew install sdl3
+uv sync
+```
+
+| Command | Result |
+|---|---|
+| `make` | The game `build/dm` and the test library `build/libdm.dylib`. The build has 0 warnings. |
+| `make lib` | The library only. It has no SDL code. |
+| `make windows` | `build/dm.exe` for Windows x86-64, with MinGW-w64 (`brew install mingw-w64`). The first run downloads the SDL3 MinGW package into `build/sdl-mingw/`. Test it with Wine. |
+| `make SANITIZE=1` | The build with the address and undefined-behavior sanitizers. |
+| `make play PLAY_DIR=<dir>` | Copy a new build to `<dir>/dm`. The default is `playthroughs/local`. The saves in the folder stay. Run it with `<dir>/dm --data game --saves <dir>`. |
+| `make dist`, `make dist-win` | The release zips for macOS and Windows; see [Release](#release). |
+| `make clean` | Remove `build/`. |
+
+Run the game with `build/dm`. The options are in [Player manual](manual.md).
+
+## Tests
+
+The tests need `clang` and SDL3 (Homebrew). `uv sync` installs `clang-format` 23 (pinned in `pyproject.toml`); other versions format differently.
+
+```sh
+make test
+```
+
+`make test` runs `uv run pytest -q -n auto`. To run one file:
+
+```sh
+uv run pytest -q tests/<folder>/test_x.py
+```
+
+| Folder | What it proves |
+|---|---|
+| `tests/differential/` | The same input through the port (`ctypes` on `build/libdm.dylib`) and through the original in a 68000 emulator gives the same state. |
+| `tests/port/` | The port code by itself: the data layer, the UI, the control protocol, the options, and the modes. |
+| `tests/golden/` | The state, the view, the rules, the screens, and the protocol match the stored snapshots. Never regenerate a snapshot to make a test pass. |
+| `tests/tools/` | The Python tools in `tools/dmtools/`. |
+| `tests/standard/` | The coding standard, the docs links, and the docs vocabulary. |
+
+`tests/dmtest/` has the shared helpers: `load_lib()` loads a private copy of the library for a test module, `constants` mirrors C constants, and `markers` has the skip markers.
+
+Some tests need files that the repository does not have. Pytest skips them with a marker:
+
+| Marker | Needs |
+|---|---|
+| `needs_dm` | `game/` with `KAOS.FTL`, `Graphics.DAT`, and `Dungeon.DAT` |
+| `needs_csb` | `game-csb/` with `APPB.FTL`, `Graphics.DAT`, and `Dungeon.DAT` |
+| `needs_csb_mini` | `game-csb/disk-b/MINI.DAT` |
+| `needs_sdl` | SDL3 from Homebrew |
+
+Each test module owns its state, so the tests run in any order and in parallel.
+
+### Test seams
+
+- `build/libdm.dylib` holds every layer except the SDL files: `platform/main.c`, `platform/app.c`,
+  `platform/platform.c` and `platform/debug_view.c` (`SDL_SOURCES` in the `Makefile`). The tests call its C
+  functions with ctypes.
+- `state_get_string` (`control/state_json.h`) gives the state, the view or the map as JSON.
+- The tests set `g_frame_hook` to run the frames of a sequence, for example in
+  `tests/differential/test_csb_ending.py`.
+- The tests replace the OS hooks of `data/os.h`. `dmtest.lib.set_folder_hooks` sets the folder hooks to Python
+  functions, because the SDL code of `platform/app.c` that sets them is not in the library.
+
+## Layout
+
+- `src/`: the port in five layers; see [Architecture](architecture.md).
+- `tools/dmtools/`: the Python tools. `tools/ghidra/`: the decompile scripts. `tools/dist/`: the release scripts.
+- `tests/`: see the table above.
+- Git-ignored data: `game/`, `game-csb/` (original files), `reference/` (Ghidra output and original material), `playthroughs/` except `playthroughs/template/`.
+
+## Coding standard
+
+Follow [Coding standard](coding-standard.md) for every change in `src/`.
+
+- `make format` formats the C files. Run it before a commit. To hide the format commit in `git blame`:
+
+  ```sh
+  git config blame.ignoreRevsFile .git-blame-ignore-revs
+  ```
+
+- `make check` runs `ruff`, `tests/standard` (with the format check), and the full suite.
+
+## Add a game rule
+
+1. Find the original function in [kaos-symbols.csv](reference/kaos-symbols.csv).
+2. Write the rule in the engine module that owns the data.
+3. Name every value (rule 3.1 of [Coding standard](coding-standard.md)).
+4. Change the user interface only through the redraw flags or a hook.
+5. Write a differential test against the emulator. When the emulator cannot reach the case, write a golden
+   scenario.
+6. Run `make check`.
+
+## Release
+
+1. In `CHANGELOG.md`, move the entries of "Unreleased" under a new heading `## X.Y.Z - YYYY-MM-DD`.
+2. Set `version` in `pyproject.toml` to the same number. Run `uv lock`.
+3. `make check`.
+4. `make dist` builds `build/DMMac-macos-arm64.zip` (the game and SDL3, without game files).
+5. `make dist-win` builds `build/DMMac-windows-x64.zip` (`dm.exe` and `SDL3.dll`).
+6. Commit `CHANGELOG.md`, `pyproject.toml`, and `uv.lock` with the message `docs: version X.Y.Z`.
+7. `git tag vX.Y.Z`.
+8. Push the branch and the tag.
+9. Copy the `CHANGELOG.md` section of the version into `build/notes.md`.
+10. Create the release:
+
+    ```sh
+    gh release create vX.Y.Z build/DMMac-macos-arm64.zip build/DMMac-windows-x64.zip --notes-file build/notes.md
+    ```
+
+### Replace the zips of a release
+
+A change that keeps the version number replaces the zips of its release:
+
+1. In `CHANGELOG.md`, add the entries to the section of the released version.
+2. `make check`, `make dist`, `make dist-win`.
+3. Commit `CHANGELOG.md`.
+4. Copy the `CHANGELOG.md` section of the version into `build/notes.md`.
+5. Push the branch, move the tag to the new commit, and replace the zips and the notes:
+
+   ```sh
+   git tag -f vX.Y.Z && git push -f origin vX.Y.Z
+   gh release upload vX.Y.Z build/DMMac-macos-arm64.zip build/DMMac-windows-x64.zip --clobber
+   gh release edit vX.Y.Z --notes-file build/notes.md
+   ```

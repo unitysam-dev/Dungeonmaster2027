@@ -115,7 +115,9 @@ class Handler(BaseHTTPRequestHandler):
   except (ValueError,TypeError) as e:self.reply({'error':str(e)},400)
   except Exception as e:self.reply({'error':str(e)},500)
 if __name__=='__main__':
+ (ROOT/'evidence').mkdir(exist_ok=True)
  server=ThreadingHTTPServer(('127.0.0.1',PORT),Handler)
+ PORT=server.server_port
  print('Original-engine Level 4: http://127.0.0.1:'+str(PORT),flush=True)
  try:server.serve_forever()
  finally:W.running=False;W.child.terminate();W.child.wait(timeout=3)

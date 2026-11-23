@@ -12,3 +12,12 @@ __pycache__/
 *.dat
 *.ftl
 *.adf
+/build.log
+/node_modules/
+/bridge.next
+/native-test
+/inspect-level
+/mouse-targets
+/evidence/*
+!/evidence/*.c
+!/evidence/*.cjs

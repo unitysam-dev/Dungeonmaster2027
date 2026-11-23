@@ -1,0 +1,301 @@
+# Save file format
+
+The Dungeon Master v3.60 save file `DMGAME~.DAT` and the port code that reads and writes it. The original routines are `save_game` (`0x125a44`) and `load_game` (`0x1265d4`) in `KAOS.FTL`.
+
+The port has two modules:
+
+- `src/engine/savefile.c` handles the container: the header, the cipher, and the checksums.
+- `src/engine/savegame.c` copies the game state into the blocks and back. `src/engine/dungeon.c` writes and reads the dungeon part.
+
+The English version removes `~` from the file name. The port writes `DMGAME.DAT` and `DMGAME.BAK`. The save slots of the advanced mode use the same format: slot 1 is `DMGAME.DAT`, slots 2–8 are `DMGAME2.DAT`–`DMGAME8.DAT` with the backups `DMGAME2.BAK`–`DMGAME8.BAK` (Chaos Strikes Back, CSB: `CSBGAME`). The quick save `QUICK.DAT` uses the same format.
+
+## Byte order
+
+All words and longs are big-endian. The cipher and the checksums operate on big-endian 16-bit words. All sums use 16-bit wraparound.
+
+## File layout
+
+| Part | Size in bytes | Encrypted | Checked |
+|---|---|---|---|
+| Header | 512 | Bytes `0x100`–`0x1ff` | Header chain |
+| Block 0: globals | 128 | Yes | Checksum |
+| Block 1: active groups | `max_active_group_count × 16` | Yes | Checksum |
+| Block 2: champions and party | 1408 (`0x580`) | Yes | Not checked on load |
+| Block 3: timeline events | `event_max_count × 10` | Yes | Checksum |
+| Block 4: timeline index | `event_max_count × 2` | Yes | Checksum |
+| Portraits | 4 × 464 | No | No |
+| Dungeon | Variable | No | Byte sum word at the end |
+
+The globals block gives the sizes of blocks 1, 3, and 4. The reader decrypts block 0 first. Then it reads the two counts. The sizes are 16-bit values, as in the original.
+
+## Header
+
+The header has 512 bytes. Offsets are bytes from the start of the file.
+
+| Offset | Size | Content |
+|---|---|---|
+| `0x000` | 256 | 32 groups of 4 random words `w0`, `w1`, `w2`, `w3`. Not encrypted. |
+| `0x014` | 2 | Payload key. This is word `w2` of group 2. |
+| `0x100` | 256 | Payload: 128 words, encrypted with the payload key. |
+| `0x12a` | 1 | Header byte (`SAVE_HEADER_HEADER_BYTE`). The original writes back the byte of the last load, default 1. The port writes 1. |
+| `0x12b` | 1 | Platform. The original writes 5. A load fails when the value is 1. |
+| `0x130` | 2 | Dialog choice. The original writes 1. A load does not read it. |
+| `0x132` | 4 | Game ID (`g_game_id`). |
+| `0x136` | 32 | 16 random keys. Keys 0–4 encrypt blocks 0–4. |
+| `0x156` | 10 | Checksums of blocks 0–4. |
+| `0x176` | 2 | Save format. A load fails when the value is not 3. |
+| `0x178` | 2 | Dungeon ID. 10 for the Dungeon Master dungeon. |
+| `0x17a` | 134 | `g_save_header_extra`. The original copies it unchanged. |
+
+The offsets from `0x12a` to `0x1ff` are in the payload. They are readable only after decryption.
+
+### Header chain
+
+The random words make a chain. The chain value must equal the 16-bit sum of the 128 plain payload words.
+
+```c
+acc = 0;
+for (g = 0; g < 32; g++)
+    acc = w3[g] ^ ((w1[g] ^ (w0[g] + acc)) - w2[g]);
+```
+
+The writer (`save_write_header`, `0x1257ca`) fills all words with `random16`. It sets `w3` of the last group so that the chain gives the payload sum. The reader (`save_read_header`, `0x125766`) decrypts the payload and compares the two values.
+
+## Block cipher
+
+`savefile_xor_block` (`0x125510`) encrypts and decrypts in place. XOR is symmetric, so one function does both. It also returns the checksum.
+
+```c
+sum = key;
+for (i = count; i != 0; i--) {
+    old = *w;
+    *w ^= key;
+    sum += *w + old;
+    key += i;
+    w++;
+}
+```
+
+The checksum adds the plain word and the encrypted word. Thus the checksum is the same before and after encryption. The original `save_block_checksum` (`0x125542`) computes the same sum without a change to the data.
+
+The original loop is a `do`/`while` loop. A count of 0 runs 65536 times. The port runs 0 times for a count of 0. A valid save does not have an empty block.
+
+The checksum is weak. A change that sets a bit in the plain word and clears the same bit in the encrypted word does not change the sum.
+
+## Blocks
+
+### Block 0: globals
+
+128 bytes. Unused bytes are 0.
+
+| Offset | Size | Global |
+|---|---|---|
+| `0x00` | 4 | `g_game_time` |
+| `0x04` | 4 | `g_random_seed` |
+| `0x08` | 2 | `g_leader_hand_object` |
+| `0x0a` | 2 | `g_party_champion_count` |
+| `0x0c` | 2 | `g_party_map_x` |
+| `0x0e` | 2 | `g_party_map_y` |
+| `0x10` | 2 | `g_party_direction` |
+| `0x12` | 2 | `g_party_map_index` |
+| `0x14` | 2 | `g_leader_index` |
+| `0x16` | 2 | `g_magic_caster_champion_index` |
+| `0x18` | 2 | `g_timeline.count` |
+| `0x1a` | 2 | `g_timeline.first_unused` |
+| `0x1c` | 2 | `g_timeline.capacity` |
+| `0x1e` | 2 | `g_active_group_count` |
+| `0x20` | 4 | `g_last_creature_attack_time` |
+| `0x24` | 4 | `g_last_party_movement_time` |
+| `0x28` | 2 | `g_disabled_movement_ticks` |
+| `0x2a` | 2 | `g_projectile_disabled_movement_ticks` |
+| `0x2c` | 2 | `g_last_projectile_disabled_movement_direction` |
+| `0x2e` | 2 | `g_max_active_group_count` |
+
+### Block 1: active groups
+
+`g_active_groups`: 16 bytes per active group, `g_max_active_group_count` entries, in the original order of `ActiveGroup`. `group_index` is a big-endian word. After the load, the original raises `g_max_active_group_count` to at least 110 (`0x6e`).
+
+### Block 2: champions and party
+
+1408 bytes: 4 champion records of `0x140` bytes (`g_champions`, `champion_pack`), then 128 bytes of `g_party` (`0x101ed4`). The bytes from `0x58` to `0x7f` of the party part are not traced. The port writes 0 and ignores them on load.
+
+Before the save, `save_game` removes the weight of the leader hand object from the leader load (champion offset `0x110`). `load_game` ignores the checksum of this block (the return value of `save_read_checked_block`), and so does the port.
+
+### Block 3: timeline events
+
+`g_timeline.events`: 10 bytes per event (`map_time` long, `type`, `priority`, `b`, `c`), `g_timeline.capacity` entries. A free slot has the next free index in the high word, as in the original. The load rebuilds the free list (`timeline_reset`).
+
+### Block 4: timeline index
+
+`g_timeline.heap`: one word per event, `g_timeline.capacity` entries.
+
+### Portraits
+
+Four champion portrait bitmaps, not encrypted. Each bitmap has `((32 + 15) & ~15) / 2 × 29` = 464 bytes. `g_portrait_width` (`0x102958`) is 32. `g_portrait_height` (`0x10295a`) is 29. The bitmaps are in the interleaved form of `champion_portraits_to_interleaved` (`0x112f5c`).
+
+### Dungeon
+
+The dungeon in `Dungeon.DAT` format without compression ([Dungeon.DAT format](dungeon.md#dungeon-data)). Then one word: the 16-bit sum of all bytes of the dungeon parts. `dungeon_load_saved` accepts the dungeon when the word is missing or equal to the sum.
+
+## C API
+
+The header `src/engine/include/savefile.h` declares the API.
+
+### `SaveFile`
+
+| Field | Content |
+|---|---|
+| `data` | Plain copy of the whole file. `savefile_decode` allocates it. `savefile_free` frees it. |
+| `header` | 512 bytes. The payload at `0x100` is plain. |
+| `block[5]`, `block_size[5]` | Plain blocks 0–4 and their sizes in bytes. |
+| `portraits` | 4 × 464 bytes. |
+| `dungeon`, `dungeon_size` | Dungeon parts and the byte sum word. The port does not parse them here. |
+
+### `bool savefile_decode(const uint8_t *file, uint32_t size, SaveFile *s)`
+
+Copies the file, decrypts the header and the blocks, and sets the pointers in `s` into the copy. Returns false and clears `s` when one of these checks fails:
+
+- The file is shorter than the header, the blocks, or the portraits.
+- The header chain does not equal the payload sum.
+- The platform byte is 1 or the save format is not 3.
+- The checksum of block 0, 1, 3, or 4 is not correct.
+
+Call `savefile_free` after a successful decode.
+
+### `uint8_t *savefile_encode(const SaveFile *s, uint32_t *size)`
+
+Builds a save file from a plain header, the plain blocks, the portraits, and the dungeon. Returns a `malloc` buffer and sets `*size`. Free the buffer with `free`. The function does not change `s`.
+
+The caller fills the header: the 256 random bytes, the 16 keys at `0x136`, and the fields at `0x12a`–`0x1ff`. Use `random16` for the random words and the keys, as the original does. The function then:
+
+1. Computes the block checksums and writes them to `0x156`.
+2. Sets `w3` of the last chain group.
+3. Encrypts the payload and the blocks.
+
+Returns `NULL` when a pointer is missing or a value in `block_size` does not match the size that block 0 gives.
+
+### `uint16_t savefile_xor_block(uint8_t *bytes, uint16_t key, uint16_t word_count)`
+
+The block cipher. Encrypts or decrypts `word_count` big-endian words in place. Returns the checksum.
+
+### `void savefile_free(SaveFile *s)`
+
+Frees the decoded copy and clears `s`.
+
+### Header fields
+
+| Function | Purpose |
+|---|---|
+| `savefile_init_header(h, game_id, dungeon_id, extra)` | Clears the header. Writes 16 keys with `random16`, then 127 chain words with `random16`, in the order of `save_game` and `save_write_header`. Writes the header byte 1, platform 5, dialog choice 1, the game ID, format 3, the dungeon ID, and the 134 extra bytes (CSB: 132). |
+| `savefile_get_game_id(h)`, `savefile_get_dungeon_id(h)`, `savefile_get_header_extra(h)` | Read the fields of a plain header. |
+| `savefile_get_extra_size()` | The number of extra bytes: 134, or 132 for CSB. |
+
+### CSB header
+
+With `g_adventure == ADVENTURE_CSB`, all functions use the CSB header:
+
+| Field | DM offset | CSB offset | CSB value |
+|---|---|---|---|
+| Payload key | `0x014` (group 2, `w2`) | `0x03a` (group 7, `w1`) | Random |
+| Header byte (`SAVE_HEADER_HEADER_BYTE`) | `0x12a` | `0x12c` | Byte of the last load, default 1 |
+| Platform | `0x12b` | `0x12d` | 5. A load fails when the value is 1. |
+| Dialog choice | `0x130` | `0x132` | Not read by the load |
+| Game ID | `0x132` | `0x134` | `g_game_id` |
+| 16 keys | `0x136` | `0x138` | Keys 0–4 encrypt blocks 0–4 |
+| 5 checksums | `0x156` | `0x158` | |
+| Save format | `0x176` | `0x178` | 3. A load fails on other values. |
+| Dungeon ID | `0x178` | `0x17a` | From the dungeon header, default 10 |
+| Extra bytes | `0x17a`, 134 bytes | `0x17c`, 132 bytes | Copied unchanged |
+
+`savefile_decode` also checks the block 2 checksum. The CSB save file is `CSBGAME.DAT`; the other differences are in [Chaos Strikes Back data files](../csb/data.md#save-file).
+
+## Game state (`savegame.c`)
+
+### Files
+
+The save directory is the folder of `--saves`, otherwise the data directory (`--data`, default `game/`). `startend_set_save_dir` sets it.
+
+`bool savegame_save(const char *dir)`:
+
+1. `timeline_reset`. Then pack the globals, the active groups, the champions, the party, the timeline events, and the timeline index into the blocks.
+2. The saved leader load does not count the hand object ([Block 2](#block-2-champions-and-party)). The live state does not change.
+3. Write the portraits and the dungeon (`dungeon_save`).
+4. `savefile_init_header` with `g_game_id`, `g_dungeon_id`, and the extra bytes of the last load. `savefile_encode`.
+5. Delete `DMGAME.BAK`. Rename `DMGAME.DAT` to `DMGAME.BAK`. Write `DMGAME.DAT`.
+6. Set `g_session.saved_game_exists` and `g_session.last_save_time`. Return true, or false on a write error.
+
+The random header words come after the copy of the globals. Thus the saved random seed is the seed before the save, as in the original.
+
+`SavegameResult savegame_load(const char *dir)` returns `SAVEGAME_LOADED` (1), `SAVEGAME_MISSING` (0), or `SAVEGAME_DAMAGED` (-1):
+
+1. Read `DMGAME.DAT`. When it is missing, read `DMGAME.BAK`.
+2. `savefile_decode`. Then `dungeon_load_saved` on the dungeon part. A failure gives `SAVEGAME_DAMAGED`.
+3. Copy block 0 into the globals. `g_session.last_load_time` gets the game time.
+4. Allocate the timeline for `g_timeline.capacity` events and the active groups for at least 110 entries. Copy blocks 1–4. Raise `g_max_active_group_count` to at least 110. `timeline_reset`. CSB keeps the saved count ([CSB engine compared with the DM engine](../csb/engine-diff.md#creatures)).
+5. Decode the portrait of each champion into `ChampionRuntime.portrait` (see [Portrait pixels](#portrait-pixels)). Copy the game ID, the dungeon ID, and the extra header bytes.
+6. Clear `g_session.party_dead` and the sleep flag. Set `g_session.saved_game_exists`.
+7. When the file was the backup, rename it to `DMGAME.DAT`.
+
+When a file is damaged, the dungeon does not load and some globals can change. The entrance starts a new game from `Dungeon.DAT`, which sets all state again.
+
+`gameloop_start_loaded_game` then does the rest of `start_game`:
+
+1. Makes the party map current (`group_remove_all_active_groups`, `map_set_party_map`, `group_add_all_active_groups`).
+2. Shows "GAME LOADED, READY TO PLAY." and draws the interface.
+3. Runs `champion_reset_for_new_game`: the hand object goes back into the hand, `champion_set_leader` adds its weight to the leader load again, and the magic caster comes back.
+
+The slot list (`savegame_read_slot_info`) reads each file without a load:
+
+1. Strips the extension blocks with the rules of `savegame_load_from`.
+2. Decodes the rest.
+3. Checks the byte sum word after the dungeon parts, as the load does (only when two or more bytes follow the parts).
+4. Reads the level of the party map. A file that fails a check shows DAMAGED.
+
+### Extension blocks
+
+In the advanced and LLM modes, the port adds extension blocks after the original save data. The original part is the same as a vanilla save. The length of each block follows it as a big-endian long:
+
+```
+[original save data][cheat block][length][automap block][length]
+```
+
+| Block | Mode | Bytes |
+|---|---|---|
+| Cheat block | `advanced` | `CHTS`, version 1, one byte of cheat bits: bit 0 full light, 1 immortal, 2 food and water, 3 one-hit kill, 4 walk through walls, 5 reveal map (`CHEAT_*`, `engine/game.h`) |
+| Automap block | `advanced`, `turnbased` | `AMAP`, version 1, map count, width and height of each map, one byte per square (`explored_save`) |
+
+`savegame_load_from` reads the blocks from the end. It strips each block whose length fits the file and whose magic is `AMAP` or `CHTS`, in any order. When a magic occurs twice, the last block in the file counts. The scan stops at the first block that does not fit; the bytes before it go to `savefile_decode`. After a successful load, the automap block sets the explored squares; without the block, the automap is empty. In the advanced mode, the cheat block sets the cheats. Without the cheat block, with a damaged one (size, version, or an unknown bit), or in the other modes, all cheats are off. A failed load keeps the cheats of the running game.
+
+### Portrait pixels
+
+The port keeps the portrait pixels of each champion in `ChampionRuntime.portrait`. The save writes the portrait of each party champion in the interleaved form: per row and per 16-pixel column, one word for each of the 4 bit planes (`portrait_to_interleaved`). The other portraits are 0.
+
+### Dungeon part (`dungeon.c`)
+
+- `uint8_t *dungeon_save(uint32_t *size)` writes the parts and the sum of [Dungeon](#dungeon) in the order of `save_game`. The header has the counts with the free records of the new game, so the load needs no extras.
+- `bool dungeon_load_saved(const uint8_t *data, uint32_t size)` reads these parts like `dungeon_load` for a saved game: no compression, no party start from the header, no free records, and no new `g_timeline.capacity`. It checks the byte sum when the word is there.
+
+## Tests
+
+`tests/port/test_save.py` tests the game state layer:
+
+- Round trip: a new game, a recruited champion with an object in the hand, then a save. A new game, then a load. The globals, the packed champions (the leader load less the hand object), the party, the timeline, the active groups, the portraits, and `dungeon_save` are equal.
+- The second save keeps the first file as `DMGAME.BAK`. A load without `DMGAME.DAT` uses the backup and renames it.
+- A missing file gives `SAVEGAME_MISSING`. A truncated file, a changed dungeon end, a changed header byte, and zeros give `SAVEGAME_DAMAGED`.
+- The original `save_read_header` and `save_read_checked_block` in `dmtools.emu` accept the file of `savegame_save`. The dungeon sum word is correct.
+- Ctrl+S runs the save dialog. A frame hook clicks SAVE, then CANCEL. The file exists and the game is not frozen.
+- Party death without a frame hook ends with `g_return_to_entrance`. With a frame hook, RESTART THIS GAME loads the saved game and the game continues. QUIT on THE END shows the credits and then sets `g_return_to_entrance`.
+
+`tests/differential/test_savefile.py` tests the container through `build/libdm.dylib`:
+
+- A round trip from encode to decode gives the same blocks, portraits, and dungeon.
+- The original `savefile_xor_block` in `dmtools.emu` gives the same encrypted bytes and checksums as the C encoder.
+- The original `save_read_header` and `save_read_checked_block` in `dmtools.emu` accept the C output. The test sets `g_load_from_memory` so that `save_file_read` reads from memory.
+- Truncated files, changed bytes, a wrong format, platform 1, and random data fail.
+
+## Limits
+
+- The tests have no save file of the original program. They use synthetic data, the port's own saves, and the original routines as the oracle. The original `load_dungeon` reads a file handle, so the tests do not run it on the dungeon part.
+- `savefile_decode` does not check the dungeon part. A file that is cut inside the dungeon part decodes. The dungeon loader must check the part sizes and the byte sum.
+- The meaning of the header byte at `0x12a` and of `g_save_header_extra` is not traced.
+
