@@ -1,0 +1,5 @@
+#define main bridge_program_main
+#include "bridge.c"
+#include "panel.h"
+#undef main
+int main(int argc,char**argv){if(argc<2||!init(argv[1]))return 2;int errors=0;printf("Original rank6 name: %s\n",panel_get_rank_name(6));for(int p=0;p<2;p++){select_party(p);for(int c=0;c<4;c++){Champion*ch=&g_champions[c];for(int k=0;k<SKILL_COUNT;k++){int level=champion_get_skill_level(c,k,true,true);if(level!=6){fprintf(stderr,"FAIL p%d c%d skill%d level%d\n",p,c,k,level);errors++;}}if(ch->current_health!=ch->maximum_health||ch->current_stamina!=ch->maximum_stamina||ch->current_mana!=ch->maximum_mana)errors++;printf("PARTY%d %s HP%d STAMINAraw%d MANA%d STR%d DEX%d WIS%d VIT%d ALL%dskills=6\n",p+1,ch->name,ch->maximum_health,ch->maximum_stamina,ch->maximum_mana,ch->statistics[STAT_STRENGTH][STAT_MAXIMUM],ch->statistics[STAT_DEXTERITY][STAT_MAXIMUM],ch->statistics[STAT_WISDOM][STAT_MAXIMUM],ch->statistics[STAT_VITALITY][STAT_MAXIMUM],SKILL_COUNT);}}printf("Craftsman acceptance errors=%d\n",errors);return errors?1:0;}

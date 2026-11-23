@@ -1,0 +1,7 @@
+#define main bridge_program_main
+#include "bridge.c"
+#include "status.h"
+#include "ids.h"
+#undef main
+static void icon(int cell){for(int y=0;y<200;y++)for(int x=0;x<320;x++)if(ui_command_from_mouse(TABLES_MOUSE_INTERFACE,x,y,UI_BUTTON_LEFT)==COMMAND_CLICK_CHAMPION_ICON_FIRST+cell){command_process_click(x,y,CLICK_LEFT_PRESS);command_process_click(x,y,CLICK_LEFT_RELEASE);gameloop_run_commands();return;}}
+int main(int argc,char**argv){if(argc<2||!init(argv[1]))return 2;connection(0,true);connection(1,true);select_party(0);int a=champion_get_index_in_cell(g_party_direction),b=champion_get_index_in_cell((g_party_direction+1)%4);int ca=g_champions[a].cell,cb=g_champions[b].cell;icon(0);select_party(1);select_party(0);icon(1);printf("REPRO separate icon clicks swap=%d (expected1)\n",g_champions[a].cell==cb&&g_champions[b].cell==ca);unsigned char clean[sizeof g_screen.px],marked[sizeof g_screen.px];redraw();memcpy(clean,g_screen.px,sizeof clean);status_draw_damage(0,17);memcpy(marked,g_screen.px,sizeof marked);int visible=memcmp(clean,marked,sizeof clean)!=0;redraw();printf("REPRO incoming damage drawn=%d then erased by redraw=%d\n",visible,memcmp(clean,g_screen.px,sizeof clean)==0);menus_draw_action_damage(17);memcpy(marked,g_screen.px,sizeof marked);visible=memcmp(clean,marked,sizeof clean)!=0;redraw();printf("REPRO outgoing damage drawn=%d then erased by redraw=%d\n",visible,memcmp(clean,g_screen.px,sizeof clean)==0);return 0;}

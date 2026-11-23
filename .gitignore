@@ -1,0 +1,14 @@
+/bridge
+/engine/build/
+/level.generated.h
+/private-game/
+/original-sounds.json
+__pycache__/
+*.pyc
+.env*
+*.DAT
+*.FTL
+*.ADF
+*.dat
+*.ftl
+*.adf

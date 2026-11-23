@@ -1,0 +1,4 @@
+#define main bridge_program_main
+#include "bridge.c"
+#undef main
+int main(int n,char**a){if(n<2||!init(a[1]))return 2;uint16_t seen[256];int count=0,errors=0;for(int p=0;p<2;p++){select_party(p);for(int c=0;c<4;c++){int weight=0;for(int slot=0;slot<SLOT_COUNT;slot++){uint16_t t=g_champions[c].slots[slot];if(t==THING_NONE)continue;weight+=inventory_get_object_weight(t);const ObjectInfo*info=tables_get_object_info(inventory_get_object_info_index(t));if(!info||!(info->allowed_slots&tables_get_slot_mask(slot)))errors++;for(int i=0;i<count;i++)if(THING_STRIP_CELL(seen[i])==THING_STRIP_CELL(t))errors++;seen[count++]=t;}if(weight!=g_champions[c].load)errors++;printf("PARTY%d %s load=%d max=%d\n",p+1,g_champions[c].name,weight,champion_get_maximum_load(c));}}printf("Kit uniqueobjects=%d errors=%d\n",count,errors);return errors?1:0;}
